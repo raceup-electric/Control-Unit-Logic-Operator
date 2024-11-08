@@ -1,0 +1,6 @@
+[registries]
+bluewind = { index = "https://github.com/bluewind-embedded-systems/bw-cargo-index" }
+infineon = { index = "https://github.com/Infineon/aurix-cargo-index"}
+
+[build]
+target="tc162-htc-none"
