@@ -3,7 +3,10 @@
 #![no_main]
 #![no_std]
 
+use bw_r_drivers_tc37x::can::MessageId;
+use bw_r_drivers_tc37x::embedded_can::ExtendedId;
 use bw_r_drivers_tc37x as drivers;
+use init_procedure::init_lv;
 use core::arch::asm;
 use core::time::Duration;
 use critical_section::RawRestoreState;
@@ -14,54 +17,67 @@ use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
 use drivers::scu::wdt_call::call_without_endinit;
 use drivers::{pac, ssw};
 
+mod fault_manager;
+mod init_procedure;
+use integrity_check_system::ics_bus::ics_can_base;
+use integrity_check_system::err_map::bst::Bst;
+use drivers::embedded_can::Frame;
+
+fn send_f<F>(frame: &F) -> Result<(),()> {
+    todo!();
+}
+
+
+impl Frame for drivers::can::Frame{
+    fn new(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, data: &[u8]) -> Option<Self> {
+        let id = MessageId::from(id);
+        drivers::can::Frame::new(id, data)
+    }
+
+    fn new_remote(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, dlc: usize) -> Option<Self> {
+        todo!()
+    }
+
+    fn is_extended(&self) -> bool {
+        use drivers::can::msg::MessageIdLength;
+        match self.id.length{
+            MessageIdLength::Standard => false,
+            MessageIdLength::Extended | MessageIdLength::Both => true,
+        }
+    }
+
+    fn is_remote_frame(&self) -> bool {
+        match self.data.len(){
+            0 => true,
+            _ => false,
+        }
+    }
+
+    fn id(&self) -> bw_r_drivers_tc37x::embedded_can::Id {
+        self.id.into()
+    }
+
+    fn dlc(&self) -> usize {
+        self.data.len()
+    }
+
+    fn data(&self) -> &[u8] {
+        self.data
+    }
+    // add code here
+}
+
+
 #[export_name = "main"]
 fn main() -> ! {
-    let gpio00 = pac::P00.split();
+    let mut fm = fault_manager::FaultManager::new();
+    let ics : ics_can_base::ICSCanBase<Bst, drivers::can::Frame> =
+        ics_can_base::ICSCanBase::new(10, 1, send_f);
 
-    let mut led1 = gpio00.p00_5.into_push_pull_output();
-    let mut led2 = gpio00.p00_6.into_push_pull_output();
-    let button1 = gpio00.p00_7.into_input();
-
-    let mut was_pressed = false;
+    init_lv();
 
     loop {
-        let is_pressed = button1.is_low();
-
-        if is_pressed != was_pressed {
-            was_pressed = is_pressed;
-            if is_pressed {
-                info!("Button pressed");
-            } else {
-                info!("Button released");
-            }
-        }
-
-        let period = Duration::from_millis(if is_pressed { 50 } else { 500 });
-
-        // Test set_low
-        led1.set_low();
-
-        // Test toggle
-        led2.toggle();
-
-        info!("Wait for {:?}", period);
-        wait_nop(period);
-        info!("Wait done");
-
-        // Test high
-        led1.set_high();
-
-        // Test is_set_high
-        if led1.is_set_high().unwrap_or_default() {
-            led2.set_low();
-        }
-
-        // Test is_set_low
-        if led1.is_set_low().unwrap_or_default() {
-            led2.set_high();
-        }
-
-        wait_nop(period);
+        //main loop
     }
 }
 
