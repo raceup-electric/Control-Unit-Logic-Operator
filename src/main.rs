@@ -1,12 +1,10 @@
-//! Blinks LED1 and LED2 on Aurix Lite Kit V2. Blinks faster when BUTTON1 is pressed.
-
 #![no_main]
 #![no_std]
 
-use bw_r_drivers_tc37x::can::MessageId;
+use bw_r_drivers_tc37x::can::{MessageId, NodeId};
 use bw_r_drivers_tc37x::embedded_can::ExtendedId;
 use bw_r_drivers_tc37x as drivers;
-use init_procedure::init_lv;
+use ph_pool::{init_can, Ph};
 use core::arch::asm;
 use core::time::Duration;
 use critical_section::RawRestoreState;
@@ -17,64 +15,17 @@ use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
 use drivers::scu::wdt_call::call_without_endinit;
 use drivers::{pac, ssw};
 
-mod fault_manager;
-mod init_procedure;
 use integrity_check_system::ics_bus::ics_can_base;
 use integrity_check_system::err_map::bst::Bst;
 use drivers::embedded_can::Frame;
 
-fn send_f<F>(frame: &F) -> Result<(),()> {
-    todo!();
-}
-
-
-impl Frame for drivers::can::Frame{
-    fn new(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, data: &[u8]) -> Option<Self> {
-        let id = MessageId::from(id);
-        drivers::can::Frame::new(id, data)
-    }
-
-    fn new_remote(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, dlc: usize) -> Option<Self> {
-        todo!()
-    }
-
-    fn is_extended(&self) -> bool {
-        use drivers::can::msg::MessageIdLength;
-        match self.id.length{
-            MessageIdLength::Standard => false,
-            MessageIdLength::Extended | MessageIdLength::Both => true,
-        }
-    }
-
-    fn is_remote_frame(&self) -> bool {
-        match self.data.len(){
-            0 => true,
-            _ => false,
-        }
-    }
-
-    fn id(&self) -> bw_r_drivers_tc37x::embedded_can::Id {
-        self.id.into()
-    }
-
-    fn dlc(&self) -> usize {
-        self.data.len()
-    }
-
-    fn data(&self) -> &[u8] {
-        self.data
-    }
-    // add code here
-}
-
+mod ph_pool;
 
 #[export_name = "main"]
 fn main() -> ! {
-    let mut fm = fault_manager::FaultManager::new();
-    let ics : ics_can_base::ICSCanBase<Bst, drivers::can::Frame> =
-        ics_can_base::ICSCanBase::new(10, 1, send_f);
+    let mut init_can = ph_pool::init_can::InitCan{};
+    let can = init_can.init();
 
-    init_lv();
 
     loop {
         //main loop
