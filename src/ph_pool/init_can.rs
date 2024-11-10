@@ -4,9 +4,6 @@ use drivers::pac::can0::{Can0, N as Can0Node};
 use drivers::can::pin_map::*;
 use drivers::can::config::NodeInterruptConfig;
 use drivers::cpu::Priority;
-use drivers::pac;
-
-use crate::ph_pool::PhStatus;
 
 #[derive(Debug)]
 pub struct InitCan{}
@@ -14,7 +11,7 @@ pub struct InitCan{}
 impl super::Ph for InitCan{
     type InitializedPh = Node<Can0Node, Can0, Node0, Configured>;
 
-    fn init(&mut self) -> Self::InitializedPh{
+    fn init(&mut self) -> Option<Self::InitializedPh>{
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();
 

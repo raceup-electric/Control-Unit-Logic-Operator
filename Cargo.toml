@@ -1,5 +1,5 @@
 [package]
-name = "Control_Unit_Logic_Operator__CULO__"
+name = "control_unit_logic_operator"
 version = "0.1.0"
 edition = "2021"
 license = "BSL-1.0"

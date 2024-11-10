@@ -1,45 +1,24 @@
 #![no_main]
 #![no_std]
 
-use bw_r_drivers_tc37x::can::{MessageId, NodeId};
-use bw_r_drivers_tc37x::embedded_can::ExtendedId;
 use bw_r_drivers_tc37x as drivers;
-use ph_pool::{init_can, Ph};
+use ph_pool::Ph;
 use core::arch::asm;
-use core::time::Duration;
 use critical_section::RawRestoreState;
-use drivers::embedded_hal::digital::StatefulOutputPin;
-use drivers::gpio::GpioExt;
-use drivers::log::info;
 use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
 use drivers::scu::wdt_call::call_without_endinit;
-use drivers::{pac, ssw};
-
-use integrity_check_system::ics_bus::ics_can_base;
-use integrity_check_system::err_map::bst::Bst;
-use drivers::embedded_can::Frame;
+use drivers::ssw;
 
 mod ph_pool;
 
 #[export_name = "main"]
 fn main() -> ! {
     let mut init_can = ph_pool::init_can::InitCan{};
-    let can = init_can.init();
+    let _can = init_can.init().unwrap();
 
 
     loop {
         //main loop
-    }
-}
-
-/// Wait for a number of cycles roughly calculated from a duration.
-#[inline(always)]
-fn wait_nop(period: Duration) {
-    let ns: u32 = period.as_nanos() as u32;
-    let n_cycles = ns / 920;
-    for _ in 0..n_cycles {
-        // SAFETY: nop is always safe
-        unsafe { core::arch::asm!("nop") };
     }
 }
 
