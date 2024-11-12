@@ -1,16 +1,19 @@
 use bw_r_drivers_tc37x as drivers;
-use drivers::can::*;
 use drivers::pac::can0::{Can0, N as Can0Node};
 use drivers::can::pin_map::*;
 use drivers::can::config::NodeInterruptConfig;
 use drivers::cpu::Priority;
+use drivers::can::*;
 
-pub struct CanObj;
+type CanBase = Node<Can0Node, Can0, Node0, Configured>;
 
-impl super::Ph for CanObj{
-    type Output = Node<Can0Node, Can0, Node0, Configured>;
+pub struct CanObj{
+    can_node: CanBase,
+}
 
-    fn init() -> Option<Self::Output>{
+#[allow(unused)]
+impl CanObj{
+    pub fn init() -> Option<Self>{
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();
 
@@ -64,6 +67,15 @@ impl super::Ph for CanObj{
             tos: Tos::Cpu0,
         });
 
-        Some(node.lock_configuration())
+        Some(Self{can_node: node.lock_configuration()})
+    }
+
+    pub fn transmit(&self, frame : &super::frame::Frame) -> Result<(), TransmitError>{
+        let frame = (*frame).into();
+        self.can_node.transmit(&frame)
+    }
+
+    pub fn receive(&self, from: msg::ReadFrom, data: &mut [u8]) -> Option<msg::RxMessage>{
+        self.can_node.receive(from, data)
     }
 }

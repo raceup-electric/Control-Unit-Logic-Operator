@@ -1,11 +1,11 @@
 #![no_main]
 #![no_std]
-mod init_ph_pool;
 mod ics;
 mod heap;
+mod comunication;
+mod power;
 
 use bw_r_drivers_tc37x as drivers;
-use init_ph_pool::Ph;
 use core::arch::asm;
 use critical_section::RawRestoreState;
 use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
@@ -14,7 +14,7 @@ use drivers::ssw;
 
 #[export_name = "main"]
 fn main() -> ! {
-    let can = init_ph_pool::init_can::CanObj::init().unwrap();
+    let can = comunication::can::can_obj::CanObj::init().unwrap();
     let _ics = ics::IcsCan::new(0x600_u16,&can);
 
     loop {
