@@ -1,4 +1,3 @@
-use bw_r_drivers_tc37x::embedded_can::{ExtendedId, StandardId};
 use bw_r_drivers_tc37x as drivers;
 use drivers::can::*;
 use drivers::pac::can0::{Can0, N as Can0Node};
@@ -10,64 +9,7 @@ pub struct CanObj{
     can_node: Option<Node<Can0Node, Can0, Node0, Configured>>,
 }
 
-pub struct StandardFrame<'a>{
-    base_frame: Frame<'a>
-}
-
-impl<'a> drivers::embedded_can::Frame for StandardFrame<'a>{
-    fn new(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, data: &[u8]) -> Option<Self> {
-        let id: drivers::embedded_can::Id = id.into();
-        let mx = MessageId::from(id);
-        Some(Self{base_frame: Frame::new(mx, data)?})
-    }
-
-    fn new_remote(id: impl Into<bw_r_drivers_tc37x::embedded_can::Id>, dlc: usize) -> Option<Self> {
-        todo!()
-    }
-
-    fn is_extended(&self) -> bool {
-        match self.base_frame.id.length{
-            msg::MessageIdLength::Standard => false,
-            msg::MessageIdLength::Extended | msg::MessageIdLength::Both => true,
-        }
-    }
-
-    fn is_remote_frame(&self) -> bool {
-        todo!()
-    }
-
-    fn id(&self) -> bw_r_drivers_tc37x::embedded_can::Id {
-        let d = self.base_frame.id.data;
-        match self.base_frame.id.length{
-            msg::MessageIdLength::Standard => 
-                drivers::embedded_can::Id::Standard(StandardId::new(d.try_into().unwrap()).unwrap()),
-            msg::MessageIdLength::Extended | msg::MessageIdLength::Both
-                => drivers::embedded_can::Id::Extended(ExtendedId::new(d).unwrap()),
-        }
-    }
-
-    fn dlc(&self) -> usize {
-        self.base_frame.data.len()
-    }
-
-    fn data(&self) -> &[u8] {
-        self.base_frame.data
-    }
-}
-
 impl CanObj {
-    pub fn send_ics_can(frame: &StandardFrame) -> Result<(), ()> {
-        // if let Some(n) = self.can_node{
-        //     match n.transmit(frame){
-        //         Ok(_) => Ok(()),
-        //         Err(_) => Err(())
-        //     }
-        // }else{
-        //     Err(())
-        // }
-        Ok(())
-    }
-
     pub fn new() -> Self {
         Self{
             can_node: None
@@ -75,9 +17,17 @@ impl CanObj {
     }
 }
 
+impl CanObj {
+    pub fn get_node(&self) -> Option<&Node<Can0Node, Can0, Node0, Configured>> {
+        match &self.can_node{
+            None => None,
+            Some(n) => Some(n)
+        }
+    }
+    
+}
 
 impl super::Ph for CanObj{
-
     fn init(&mut self) -> Option<()>{
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();

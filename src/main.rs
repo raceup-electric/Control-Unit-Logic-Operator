@@ -1,25 +1,23 @@
 #![no_main]
 #![no_std]
 mod init_ph_pool;
+mod ics;
+mod heap;
 
 use bw_r_drivers_tc37x as drivers;
-use init_ph_pool::{init_can, Ph};
-use integrity_check_system::ics_bus::ics_can_base;
+use init_ph_pool::Ph;
 use core::arch::asm;
 use critical_section::RawRestoreState;
 use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
 use drivers::scu::wdt_call::call_without_endinit;
 use drivers::ssw;
 
-use integrity_check_system::err_map::bst;
-
-
 #[export_name = "main"]
 fn main() -> ! {
     let mut init_can = init_ph_pool::init_can::CanObj::new();
     init_can.init();
-    let ics : ics_can_base::ICSCanBase<bst::Bst, _> = 
-        ics_can_base::ICSCanBase::new(1, 12, init_can::CanObj::send_ics_can);
+    let can = init_can.get_node().unwrap();
+    let _ics = ics::IcsCan::new(0x600_u16,can);
 
     loop {
         //main loop

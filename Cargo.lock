@@ -109,7 +109,7 @@ checksum = "361a90feb7004eca4019fb28352a9465666b24f840f5c3cddf0ff13920590b89"
 [[package]]
 name = "integrity_check_system"
 version = "0.1.0"
-source = "git+https://github.com/mrmonopoly-cyber/integrity_check_system.git#ecb96d24422b0505abe3e4bab5e9a4f40adc8ef7"
+source = "git+https://github.com/mrmonopoly-cyber/integrity_check_system.git#02c00d8dc109b69311285a9fc275eb4f0534397c"
 dependencies = [
  "bit_ops",
  "embedded-can",
