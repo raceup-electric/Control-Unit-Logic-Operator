@@ -14,13 +14,12 @@ use drivers::ssw;
 
 #[export_name = "main"]
 fn main() -> ! {
-    let mut init_can = init_ph_pool::init_can::CanObj::new();
-    init_can.init();
-    let can = init_can.get_node().unwrap();
-    let _ics = ics::IcsCan::new(0x600_u16,can);
+    let can = init_ph_pool::init_can::CanObj::init().unwrap();
+    let _ics = ics::IcsCan::new(0x600_u16,&can);
 
     loop {
         //main loop
+        unsafe{asm!("nop")};
     }
 }
 

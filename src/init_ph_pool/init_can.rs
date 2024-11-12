@@ -5,30 +5,12 @@ use drivers::can::pin_map::*;
 use drivers::can::config::NodeInterruptConfig;
 use drivers::cpu::Priority;
 
-pub struct CanObj{
-    can_node: Option<Node<Can0Node, Can0, Node0, Configured>>,
-}
-
-impl CanObj {
-    pub fn new() -> Self {
-        Self{
-            can_node: None
-        }
-    }
-}
-
-impl CanObj {
-    pub fn get_node(&self) -> Option<&Node<Can0Node, Can0, Node0, Configured>> {
-        match &self.can_node{
-            None => None,
-            Some(n) => Some(n)
-        }
-    }
-    
-}
+pub struct CanObj;
 
 impl super::Ph for CanObj{
-    fn init(&mut self) -> Option<()>{
+    type Output = Node<Can0Node, Can0, Node0, Configured>;
+
+    fn init() -> Option<Self::Output>{
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();
 
@@ -82,7 +64,6 @@ impl super::Ph for CanObj{
             tos: Tos::Cpu0,
         });
 
-        self.can_node = Some(node.lock_configuration());
-        Some(())
+        Some(node.lock_configuration())
     }
 }

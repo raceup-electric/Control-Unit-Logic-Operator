@@ -17,7 +17,16 @@ pub struct IcsCan<'a>{
     can_node: &'a CanNode,
 }
 
+#[allow(unused)]
 impl<'a> IcsCan<'a> {
+    pub fn with_capacity(can_node: &'a CanNode,int_err_cap: usize, ext_err_cap: usize, error_cap: usize, id: TID) -> Self
+    {
+        Self{
+            ics_base: ICS::with_capacity(int_err_cap, ext_err_cap, error_cap, id),
+            can_node
+        }
+    }
+
     pub fn new(id: u16,can_node: &'a CanNode) -> Self {
         let ics = ICS::new(id).unwrap();
         Self{ics_base:ics,can_node}
@@ -40,7 +49,7 @@ impl<'a> IcsCan<'a> {
         for mex in mexs.iter(){
             let mut payload = [0_u8;8];
             let id = mex.id();
-            let id = MessageId{ data: id.into(), length: msg::MessageIdLength::Standard  };
+            let id = MessageId{ data: id.into(), length: msg::MessageIdLength::Standard};
             payload[0] = mex.part();
             let mut i =1;
             for err in mex.iter_data(){
