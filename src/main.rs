@@ -4,6 +4,8 @@ mod ics;
 mod heap;
 mod comunication;
 mod power;
+mod driver;
+mod utils;
 
 use bw_r_drivers_tc37x as drivers;
 use core::arch::asm;

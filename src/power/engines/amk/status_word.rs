@@ -1,3 +1,4 @@
+use crate::utils::bit_manipulation::BitOps;
 /*
  * struct motorValues1 {
  *    bool AMK_bSystemReady;      //System ready(SBM)
@@ -42,46 +43,30 @@ impl AmkStatusWord {
     }
 
     fn update_status(&mut self, field: WorkFields,  val: bool){
+        let word = &mut self.word;
         match field{
-            WorkFields::AMK_bSystemReady => self.update_bit(0, val),
-            WorkFields::AMK_bError => self.update_bit(1, val),
-            WorkFields::AMK_bWarn => self.update_bit(2, val),
-            WorkFields::AMK_bQuitDcOn =>self.update_bit(3, val) ,
-            WorkFields::AMK_bDcOn => self.update_bit(4, val),
-            WorkFields::AMK_bQuitInverterOn => self.update_bit(5, val),
-            WorkFields::AMK_bInverterOn => self.update_bit(6, val),
-            WorkFields::AMK_bDerating => self.update_bit(7, val),
+            WorkFields::AMK_bSystemReady => *word = word.update_bit(0, val).unwrap(),
+            WorkFields::AMK_bError => *word = word.update_bit(1, val).unwrap(),
+            WorkFields::AMK_bWarn => *word = word.update_bit(2, val).unwrap(),
+            WorkFields::AMK_bQuitDcOn => *word = word.update_bit(3, val).unwrap(),
+            WorkFields::AMK_bDcOn => *word = word.update_bit(4, val).unwrap(),
+            WorkFields::AMK_bQuitInverterOn => *word = word.update_bit(5, val).unwrap(),
+            WorkFields::AMK_bInverterOn => *word = word.update_bit(6, val).unwrap(),
+            WorkFields::AMK_bDerating =>*word = word.update_bit(7, val).unwrap(),
         }
     }
 
     fn check_status(&self, field: WorkFields) -> bool{
+        let word = &self.word;
         match field{
-            WorkFields::AMK_bSystemReady => self.check_bit(0),
-            WorkFields::AMK_bError => self.check_bit(1),
-            WorkFields::AMK_bWarn => self.check_bit(2),
-            WorkFields::AMK_bQuitDcOn => self.check_bit(3),
-            WorkFields::AMK_bDcOn => self.check_bit(4),
-            WorkFields::AMK_bQuitInverterOn =>self.check_bit(5), 
-            WorkFields::AMK_bInverterOn => self.check_bit(6),
-            WorkFields::AMK_bDerating => self.check_bit(7),
+            WorkFields::AMK_bSystemReady => word.check_bit(0).unwrap(),
+            WorkFields::AMK_bError =>word.check_bit(1).unwrap(),
+            WorkFields::AMK_bWarn => word.check_bit(2).unwrap(),
+            WorkFields::AMK_bQuitDcOn =>word.check_bit(3).unwrap(),
+            WorkFields::AMK_bDcOn => word.check_bit(4).unwrap(),
+            WorkFields::AMK_bQuitInverterOn =>word.check_bit(5).unwrap(), 
+            WorkFields::AMK_bInverterOn => word.check_bit(6).unwrap(),
+            WorkFields::AMK_bDerating => word.check_bit(7).unwrap(),
         }
-    }
-
-    //private
-    fn update_bit(&mut self,bit : u8, active: bool){
-        let bit = match active{
-            true => 1 << bit,
-            false => !(1 << bit),
-        };
-
-        match active{
-            true => self.word |= bit,
-            false => self.word &= bit,
-        }
-    }
-
-    fn check_bit(&self,bit: usize) -> bool{
-        let bit = 1 << bit;
-        (self.word & bit) == 1
     }
 }
