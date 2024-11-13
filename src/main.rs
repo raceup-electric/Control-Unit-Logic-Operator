@@ -8,6 +8,7 @@ mod driver;
 mod utils;
 mod race_modality;
 mod cooling;
+mod logging;
 
 use bw_r_drivers_tc37x as drivers;
 use core::arch::asm;
