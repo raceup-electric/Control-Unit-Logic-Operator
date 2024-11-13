@@ -8,17 +8,24 @@ pub enum HvStatus{
 }
 
 pub struct InverterAmk{
-    engines: [AmkEngine;NUMOFENGINE]
+    engine_fl: AmkEngine,
+    engine_fr: AmkEngine,
+    engine_bl: AmkEngine,
+    engine_br: AmkEngine,
 }
 
 impl InverterAmk {
     fn new() -> Self {
-        let engines = [
-            AmkEngine::new(),
-            AmkEngine::new(),
-            AmkEngine::new(),
-            AmkEngine::new(),
-        ];
-        Self{ engines }
+        Self{ 
+            engine_fl: AmkEngine::new(), 
+            engine_fr: AmkEngine::new(), 
+            engine_bl: AmkEngine::new(), 
+            engine_br: AmkEngine::new(), 
+        }
+    }
+
+    //TODO: define the new logic to check if the HV is active or not
+    fn check_hv(&self) -> HvStatus{
+        todo!()
     }
 }
