@@ -1,18 +1,19 @@
 use super::*;
 
-type Fan = Component;
+const INIT_SEQ_FAN : [(Power,TimeStep);2] = [(0,0),(0,0)];
 
-pub struct FanList{
-    left: Fan,
-    right: Fan,
+type Fan<'a> = Component<'a>;
+
+pub struct FanList<'a>{
+    left: Fan<'a>,
+    right: Fan<'a>,
 }
 
-impl  FanList{
+impl<'a> FanList<'a>{
     fn new() -> Self{
-        let init_seq_fan = [];
         FanList{
-            left: Fan::new(&init_seq_fan),
-            right: Fan::new(&init_seq_fan),
+            left: Fan::new(&INIT_SEQ_FAN),
+            right: Fan::new(&INIT_SEQ_FAN),
         }
     }
     
