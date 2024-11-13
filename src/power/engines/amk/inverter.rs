@@ -10,8 +10,8 @@ pub enum HvStatus{
 pub struct InverterAmk{
     engine_fl: AmkEngine,
     engine_fr: AmkEngine,
-    engine_bl: AmkEngine,
-    engine_br: AmkEngine,
+    engine_rl: AmkEngine,
+    engine_rr: AmkEngine,
 }
 
 impl InverterAmk {
@@ -19,8 +19,8 @@ impl InverterAmk {
         Self{ 
             engine_fl: AmkEngine::new(), 
             engine_fr: AmkEngine::new(), 
-            engine_bl: AmkEngine::new(), 
-            engine_br: AmkEngine::new(), 
+            engine_rl: AmkEngine::new(), 
+            engine_rr: AmkEngine::new(), 
         }
     }
 

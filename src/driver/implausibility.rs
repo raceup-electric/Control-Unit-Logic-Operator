@@ -26,15 +26,15 @@ impl DriverImplausibility {
             ImplausibilityType::ThrottleBrake => self.imp_buffer.check_bit(0),
             ImplausibilityType::ThrottlePaddle => self.imp_buffer.check_bit(1),
             ImplausibilityType::ThrottlePotentiometer => self.imp_buffer.check_bit(2),
-        }
+        }.unwrap()
     }
 
-    pub fn update_imp(&self, imp: ImplausibilityType, val: bool) -> bool{
-        match imp{
-            ImplausibilityType::ThrottleBrake => self.imp_buffer.update_bit(bit, val),
+    pub fn update_imp(&mut self, imp: ImplausibilityType, val: bool){
+        self.imp_buffer = match imp{
+            ImplausibilityType::ThrottleBrake => self.imp_buffer.update_bit(0, val),
             ImplausibilityType::ThrottlePaddle => self.imp_buffer.update_bit(1,val),
             ImplausibilityType::ThrottlePotentiometer => self.imp_buffer.update_bit(2,val),
-        }
+        }.unwrap()
     }
     
 }
