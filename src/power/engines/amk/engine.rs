@@ -76,10 +76,10 @@ impl AmkEngine {
         }
     }
 
-    pub fn recv_mex_inverter(&mut self,mex: InternalValues) {
+    pub fn recv_mex_inverter(&mut self,mex: &InternalValues) {
         match mex{
-            InternalValues::AmkActualValues1(m) => self.mex_1 = m,
-            InternalValues::AmkActualValues2(m) => self.mex_2 = m,
+            InternalValues::AmkActualValues1(m) => self.mex_1 = *m,
+            InternalValues::AmkActualValues2(m) => self.mex_2 = *m,
         }
     }
 
