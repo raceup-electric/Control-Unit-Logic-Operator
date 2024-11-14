@@ -1,3 +1,8 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ */
+
 pub enum RaceModality {
     Driver,
     EmbeddedSystemAcceleration,

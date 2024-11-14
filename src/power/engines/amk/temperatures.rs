@@ -1,3 +1,12 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * This module is based on the datasheet of AMK engines. Check for more info.
+ * Is is the pdf in this directory (./amk_datasheet.pdf). 
+ * The info about the Can messages starts at page: 60
+ */
+
 pub enum TempCategory{
     Motor,
     Inverter,

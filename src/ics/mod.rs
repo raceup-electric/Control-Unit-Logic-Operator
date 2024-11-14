@@ -1,3 +1,15 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * This module is the implementation in Can of the ICS (Integrity Check System).
+ * The ICS is the general distributed integrity system developed to simply implement
+ * in any hardware the manage of the faults inside of a board and the dependencies between them
+ *
+ * This abstraction use the external module integrity_check_system and create a wrapper 
+ * to make it work using the can
+ */
+
 use integrity_check_system::ics::{ICS,ICSTemplate};
 use integrity_check_system::err_map::bst::Bst;
 use integrity_check_system::ics_trait::internal::InternalCheck;

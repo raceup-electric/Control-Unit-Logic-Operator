@@ -1,22 +1,16 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * This module is based on the datasheet of AMK engines. Check for more info.
+ * Is is the pdf in this directory (./amk_datasheet.pdf). 
+ * The info about the Can messages starts at page: 60
+ */
+
 use crate::utils::bit_manipulation::BitOps;
 
 use super::status_word;
 use super::temperatures;
-
-/*
- *    float AMK_ActualVelocity;       //Signed - Unit: rpm - Actual speed value
- *    float AMK_TorqueCurrent;        //Signed - Raw data for calculating 'actual torque current'Iq See 'Units'on page 61
- *    Uint16 AMK_Voltage;   //unSigned - Raw data for calculating 'actual dc_bus voltage
- *    float AMK_Current;  // see PDK
- *} ;
- * 
- * struct motorValues2 {
- *    float AMK_TempMotor;                //Signed - Unit: 0.1 �C - Motor temperature
- *    float AMK_TempInverter;             //Signed - Unit: 0.1 �C - Cold plate temperature
- *    float AMK_TempIGBT;                 //Signed - Unit: 0.1 �C - IGBTtemperature
- *    unsigned int AMK_ErrorInfo;         //Unsigned - Diagnostic number
- *};
- */
 
 pub enum InternalValues {
     AmkActualValues1(AmkActualValues1),

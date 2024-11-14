@@ -1,3 +1,9 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ */
+
+
 use super::engine::{self, AmkEngine, Update};
 use crate::comunication::can::can_obj::{self, CanObj};
 use crate::comunication::can::frame::Frame;
@@ -74,10 +80,4 @@ impl<'a> crate::power::engines::PowerControl<'a> for InverterAmk<'a>{
 
         self.can_node.transmit(&frame)
     }
-    // add code here
-}
-
-impl<'a> InverterAmk<'a>
-{
-
 }

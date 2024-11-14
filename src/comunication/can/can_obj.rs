@@ -1,3 +1,15 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * Implementation of a can Node
+ *
+ * init: Instantiate a new can node that is usable to send/recv Data Frame
+ * transmit: Use the can node to send a Data Frame
+ * receive: Use the can node to receive a Data Frame and the metadata of that message
+ *
+ */
+
 use bw_r_drivers_tc37x::can::TransmitError;
 use bw_r_drivers_tc37x as drivers;
 use drivers::pac::can0::{Can0, N as Can0Node};
@@ -20,6 +32,7 @@ pub struct CanObj{
 
 #[allow(unused)]
 impl CanObj{
+    // init: Instantiate a new can node that is usable to send/recv Data Frame
     pub fn init() -> Option<Self>{
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();
@@ -77,6 +90,7 @@ impl CanObj{
         Some(Self{can_node: node.lock_configuration()})
     }
 
+    // transmit: Use the can node to send a Data Frame
     pub fn transmit(&self, frame : &super::frame::Frame) -> Result<(), ErrorTransmit>{
         let frame = (*frame).into();
         match self.can_node.transmit(&frame){
@@ -89,6 +103,7 @@ impl CanObj{
         }
     }
 
+    // receive: Use the can node to receive a Data Frame and the metadata of that message
     pub fn receive(&self, from: msg::ReadFrom, data: &mut [u8]) -> Option<msg::RxMessage>{
         self.can_node.receive(from, data)
     }

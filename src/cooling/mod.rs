@@ -1,3 +1,13 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * This module contains the implementation of the cooling system.
+ * It controls the pumps and tha fans
+ *
+ * It uses a general component to easily implement pumps and fans
+ */
+
 pub mod fans;
 pub mod pumps;
 

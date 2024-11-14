@@ -1,16 +1,13 @@
-use crate::utils::bit_manipulation::BitOps;
 /*
- * struct motorValues1 {
- *    bool AMK_bSystemReady;      //System ready(SBM)
- *    bool AMK_bError;            //Error
- *    bool AMK_bWarn;             //Warning
- *    bool AMK_bQuitDcOn;         //HVactivation acknowledgment
- *    bool AMK_bDcOn;             //HVactivation level
- *    bool AMK_bQuitInverterOn;   // RF Controller enable acknowledgment
- *    bool AMK_bInverterOn;       //Controller enable level
- *    bool AMK_bDerating;         //Derating (torque limitation active)
- * 
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ *
+ * This module is based on the datasheet of AMK engines. Check for more info.
+ * Is is the pdf in this directory (./amk_datasheet.pdf). 
+ * The info about the Can messages starts at page: 60
  */
+
+use crate::utils::bit_manipulation::BitOps;
 
 #[allow(non_camel_case_types)]
 pub enum WorkFields {

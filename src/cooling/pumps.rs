@@ -1,3 +1,8 @@
+/*
+ * Author: Alberto Damo
+ * Date: 14/11/2024
+ */
+
 use super::*;
 
 const INIT_SEQ_PUMP : [(Power,TimeStep);2] = [(0,0),(0,0)];
