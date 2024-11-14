@@ -38,9 +38,9 @@ pub struct Update{
 #[derive(Copy,Clone)]
 pub struct AmkActualValues1{
     status_word: status_word::AmkStatusWord,
-    amk_magnetizing_current: u16,
-    amk_actual_velocity: u16,
-    amk_torque_current: u16,
+    amk_actual_velocity: i16, //rpm
+    amk_torque_current: i16,
+    amk_magnetizing_current: i16,
     timestamp: u16,
 }
 
