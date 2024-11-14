@@ -109,7 +109,8 @@ impl AmkEngine {
 }
 
 fn split_i16_into_u8(num: i16) -> (u8,u8){
-    let part_1 = (num & 0x0F).try_into().unwrap();
-    let part_2 = (num & 0xF0).try_into().unwrap();
-    (part_2,part_1)
+    let num_bytes = num.to_le_bytes();
+    let part_1 = u8::from_le_bytes([num_bytes[0]]);
+    let part_2 = u8::from_le_bytes([num_bytes[1]]);
+    (part_1,part_2)
 }

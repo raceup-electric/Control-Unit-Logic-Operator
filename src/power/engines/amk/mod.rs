@@ -1,7 +1,7 @@
-pub mod status_word;
-pub mod temperatures;
-pub mod engine;
-pub mod tv;
+mod status_word;
+mod temperatures;
+mod engine;
+mod tv;
 
 pub mod inverter;
 

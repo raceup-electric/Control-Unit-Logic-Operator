@@ -6,6 +6,8 @@ const NUMOFENGINE: usize = 4;
 pub enum InverterEngineStatus{
     HvOff,
     HvOn,
+    StartPrecharge,
+    CompletePrecharge,
     RfOk,
 }
 
@@ -42,7 +44,8 @@ impl<'a> InverterAmk<'a>
        res
     }
 
-    //TODO: define the new logic to check the status of the HV,RF
+    //TODO: define the new logic to check the status of the HV,RF,Precharge,RF 
+    //and the switches between these states
     pub fn check_status(&self) -> InverterEngineStatus{
         todo!()
     }
@@ -72,6 +75,20 @@ impl<'a> InverterAmk<'a>
         let frame = Frame::new(id, &data);
 
         self.can_node.transmit(&frame)
+    }
+
+    /*
+     * throttle: gas pedal [0-100] in %
+     */
+    pub fn accelerate(&self, throttle: u8) {
+        todo!();
+    }
+
+    /*
+     * regen_brake: gas pedal [0-100] in %
+     */
+    pub fn regen_brake(&self, regen_brake: u8) {
+        todo!();
     }
 
 }
