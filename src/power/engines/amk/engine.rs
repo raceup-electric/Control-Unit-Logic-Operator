@@ -88,29 +88,23 @@ impl AmkEngine {
     }
 
     pub fn create_update_mex(&self,update: &Update ) -> [u8;8]{
-        let control_word_reserved_byte = 0_u8;
-        let mut control_word = 0_u8;
-        control_word = control_word.update_bit(0, update.AMK_bInverterOn).unwrap();
-        control_word = control_word.update_bit(1, update.AMK_bDcOn).unwrap();
-        control_word = control_word.update_bit(2, update.AMK_bEnable).unwrap();
-        control_word = control_word.update_bit(3, update.AMK_bErrorReset).unwrap();
+        let mut control_word = 0_u16;
+        control_word = control_word.update_bit(8, update.AMK_bInverterOn).unwrap();
+        control_word = control_word.update_bit(9, update.AMK_bDcOn).unwrap();
+        control_word = control_word.update_bit(10, update.AMK_bEnable).unwrap();
+        control_word = control_word.update_bit(12, update.AMK_bErrorReset).unwrap();
 
-        let (target_velocity_0,target_velocity_1) = split_i16_into_u8(update.target_velocity);
-        let (pos_torque_lim_0,pos_torque_lim_1) = split_i16_into_u8(update.pos_torque);
-        let (neg_torque_lim_0,neg_torque_lim_1) = split_i16_into_u8(update.neg_torque);
+        let cw = control_word.to_le_bytes();
+        let tv = update.target_velocity.to_le_bytes();
+        let pt = update.pos_torque.to_le_bytes();
+        let nt = update.neg_torque.to_le_bytes();
 
-        [
-            control_word_reserved_byte,control_word,
-            target_velocity_0,target_velocity_1,
-            pos_torque_lim_0,pos_torque_lim_1,
-            neg_torque_lim_0,neg_torque_lim_1
-        ]
+        let mut res = [0;8];
+        let mut i =0;
+        for byte in cw.into_iter().chain(tv).chain(pt).chain(nt){
+            res[i] = byte;
+        }
+
+        res
     }
-}
-
-fn split_i16_into_u8(num: i16) -> (u8,u8){
-    let num_bytes = num.to_le_bytes();
-    let part_1 = u8::from_le_bytes([num_bytes[0]]);
-    let part_2 = u8::from_le_bytes([num_bytes[1]]);
-    (part_1,part_2)
 }
