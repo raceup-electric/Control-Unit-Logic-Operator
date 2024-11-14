@@ -6,7 +6,7 @@ const NUMOFENGINE: usize = 4;
 pub enum InverterEngineStatus{
     HvOff,
     HvOn,
-    RfOn,
+    RfOk,
 }
 
 pub enum Engines {
@@ -31,10 +31,10 @@ impl<'a> InverterAmk<'a>
     //TODO: assign the correct can id to each engine
     pub fn new(can_node: &'a CanObj) -> Self {
        let res=  Self{
-            engine_fl: AmkEngine::new(1), 
-            engine_fr: AmkEngine::new(1), 
-            engine_rl: AmkEngine::new(1), 
-            engine_rr: AmkEngine::new(1), 
+            engine_fl: AmkEngine::new(14), 
+            engine_fr: AmkEngine::new(15), 
+            engine_rl: AmkEngine::new(16), 
+            engine_rr: AmkEngine::new(17), 
             status: InverterEngineStatus::HvOff,
             can_node
         };
