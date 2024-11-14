@@ -4,6 +4,7 @@ pub enum TempCategory{
     Igbt
 }
 
+#[derive(Copy,Clone)]
 pub struct AmkTemperatures{
     amk_temp_motor: u16,
     amk_temp_inverter: u16,

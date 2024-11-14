@@ -24,6 +24,7 @@ pub enum WorkFields {
     AMK_bDerating,     
 }
 
+#[derive(Copy,Clone)]
 pub struct AmkStatusWord{
     word: u8,
 }

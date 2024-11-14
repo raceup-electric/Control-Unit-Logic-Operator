@@ -35,3 +35,32 @@ impl BitOps for u8{
 
     }
 }
+
+impl BitOps for u16{
+    fn update_bit(self ,bit : Self, active: bool) -> Result<Self,()> 
+        where Self: Sized
+    {
+        if self >= 16{
+           return Err(())
+        }
+
+        let bit = match active{
+            true => 1 << bit,
+            false => (1 << bit) ^ 0xFF,
+        };
+        Ok(match active{
+            true => self | bit,
+            false => self & bit,
+        })
+    }
+
+    fn check_bit(&self,bit: Self) -> Result<bool,()>
+    {
+        if *self >= 16{
+            return Err(());
+        }
+        let bit : Self = 1 << bit;
+        Ok((*self & bit) == 1)
+
+    }
+}

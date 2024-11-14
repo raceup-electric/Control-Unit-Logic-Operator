@@ -1,3 +1,5 @@
+use crate::utils::bit_manipulation::BitOps;
+
 use super::status_word;
 use super::temperatures;
 
@@ -16,26 +18,98 @@ use super::temperatures;
  *};
  */
 
+pub enum InternalValues {
+    AmkActualValues1(AmkActualValues1),
+    AmkActualValues2(AmkActualValues2),
+}
 
-pub struct AmkEngine{
+#[allow(non_snake_case)]
+pub struct Update{
+    AMK_bInverterOn: bool,
+    AMK_bDcOn:bool,
+    AMK_bEnable:bool,
+    AMK_bErrorReset:bool,
+    target_velocity: i16,
+    pos_torque: i16,
+    neg_torque: i16,
+
+}
+
+#[derive(Copy,Clone)]
+pub struct AmkActualValues1{
     status_word: status_word::AmkStatusWord,
-    temps: temperatures::AmkTemperatures,
-    amk_error_info_diagnostic_number: u16,
+    amk_magnetizing_current: u16,
     amk_actual_velocity: u16,
     amk_torque_current: u16,
-    amk_magnetizing_current: u16,
+    timestamp: u16,
+}
+
+#[derive(Copy,Clone)]
+pub struct AmkActualValues2{
+    temps: temperatures::AmkTemperatures,
+    amk_error_info_diagnostic_number: u16,
+    timestamp: u16,
+}
+
+pub struct AmkEngine{
+    mex_1: AmkActualValues1,
+    mex_2: AmkActualValues2,
+    can_id: u16,
 }
 
 impl AmkEngine {
-    pub fn new() -> Self {
+    pub fn new(can_id: u16) -> Self {
         Self{
-            status_word: todo!(),
-            temps: todo!(),
-            amk_error_info_diagnostic_number: todo!(),
-            amk_actual_velocity: todo!(),
-            amk_torque_current: todo!(),
-            amk_magnetizing_current: todo!(),
+            mex_1: AmkActualValues1{
+                status_word: todo!(),
+                amk_actual_velocity: todo!(),
+                amk_torque_current: todo!(),
+                amk_magnetizing_current: todo!(),
+                timestamp: 0,
+            },
+            mex_2: AmkActualValues2{
+                temps: todo!(),
+                amk_error_info_diagnostic_number: todo!(),
+                timestamp: 0,
+            },
+            can_id
         }
     }
-    
+
+    pub fn recv_mex_inverter(&mut self,mex: InternalValues) {
+        match mex{
+            InternalValues::AmkActualValues1(m) => self.mex_1 = m,
+            InternalValues::AmkActualValues2(m) => self.mex_2 = m,
+        }
+    }
+
+    pub fn id(&self) -> u16 {
+        self.can_id
+    }
+
+    pub fn create_update_mex(&self,update: &Update ) -> [u8;8]{
+        let control_word_reserved_byte = 0_u8;
+        let mut control_word = 0_u8;
+        control_word = control_word.update_bit(0, update.AMK_bInverterOn).unwrap();
+        control_word = control_word.update_bit(1, update.AMK_bDcOn).unwrap();
+        control_word = control_word.update_bit(2, update.AMK_bEnable).unwrap();
+        control_word = control_word.update_bit(3, update.AMK_bErrorReset).unwrap();
+
+        let (target_velocity_0,target_velocity_1) = split_i16_into_u8(update.target_velocity);
+        let (pos_torque_lim_0,pos_torque_lim_1) = split_i16_into_u8(update.pos_torque);
+        let (neg_torque_lim_0,neg_torque_lim_1) = split_i16_into_u8(update.neg_torque);
+
+        [
+            control_word_reserved_byte,control_word,
+            target_velocity_0,target_velocity_1,
+            pos_torque_lim_0,pos_torque_lim_1,
+            neg_torque_lim_0,neg_torque_lim_1
+        ]
+    }
+}
+
+fn split_i16_into_u8(num: i16) -> (u8,u8){
+    let part_1 = (num & 0x0F).try_into().unwrap();
+    let part_2 = (num & 0xF0).try_into().unwrap();
+    (part_2,part_1)
 }

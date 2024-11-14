@@ -1,3 +1,4 @@
+use bw_r_drivers_tc37x::can::TransmitError;
 use bw_r_drivers_tc37x as drivers;
 use drivers::pac::can0::{Can0, N as Can0Node};
 use drivers::can::pin_map::*;
@@ -6,6 +7,12 @@ use drivers::cpu::Priority;
 use drivers::can::*;
 
 type CanBase = Node<Can0Node, Can0, Node0, Configured>;
+
+pub enum ErrorTransmit{
+    Busy,
+    InvalidDataLength,
+    InvalidAccess,
+}
 
 pub struct CanObj{
     can_node: CanBase,
@@ -70,9 +77,16 @@ impl CanObj{
         Some(Self{can_node: node.lock_configuration()})
     }
 
-    pub fn transmit(&self, frame : &super::frame::Frame) -> Result<(), TransmitError>{
+    pub fn transmit(&self, frame : &super::frame::Frame) -> Result<(), ErrorTransmit>{
         let frame = (*frame).into();
-        self.can_node.transmit(&frame)
+        match self.can_node.transmit(&frame){
+            Ok(_) => Ok(()),
+            Err(err) => Err(match err {
+                drivers::can::TransmitError::Busy => ErrorTransmit::Busy,
+                drivers::can::TransmitError::InvalidDataLength => ErrorTransmit::InvalidDataLength,
+                drivers::can::TransmitError::InvalidAccess => ErrorTransmit::InvalidAccess,
+            })
+        }
     }
 
     pub fn receive(&self, from: msg::ReadFrom, data: &mut [u8]) -> Option<msg::RxMessage>{
