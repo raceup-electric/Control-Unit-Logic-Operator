@@ -4,3 +4,6 @@ infineon = { index = "https://github.com/Infineon/aurix-cargo-index"}
 
 [build]
 target="tc162-htc-none"
+
+[target.tc162-htc-none]
+runner="tricore-probe"
