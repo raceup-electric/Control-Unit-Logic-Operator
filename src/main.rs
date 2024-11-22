@@ -14,6 +14,8 @@ mod utils;
 mod race_modality;
 mod cooling;
 mod logging;
+mod interrupt;
+mod panic;
 
 use bw_r_drivers_tc37x::gpio::GpioExt;
 use bw_r_drivers_tc37x as drivers;
@@ -21,13 +23,11 @@ use tc375_pac::{RegisterValue, ASCLIN0};
 use core::arch::asm;
 use critical_section::RawRestoreState;
 use drivers::scu::wdt::{disable_cpu_watchdog, disable_safety_watchdog};
-use drivers::scu::wdt_call::call_without_endinit;
 use drivers::{ssw,pac};
 
 
 #[export_name = "main"]
 fn main() -> ! {
-
     let can = comunication::can::can_obj::CanObj::init().unwrap();
     let _ics = ics::IcsCan::new(0x600_u16,&can);
 
@@ -68,15 +68,7 @@ fn post_init_fn() {
         panic!("Error in ssw init");
     }
 
-    load_interrupt_table();
-}
-
-#[allow(unused_variables)]
-#[panic_handler]
-fn panic(panic: &core::panic::PanicInfo<'_>) -> ! {
-    defmt::error!("Panic! {}", defmt::Display2Format(panic));
-    #[allow(clippy::empty_loop)]
-    loop {}
+    interrupt::load_interrupt_table();
 }
 
 struct Section;
@@ -96,17 +88,6 @@ unsafe impl critical_section::Impl for Section {
     }
 }
 
-extern "C" {
-    static __INTERRUPT_TABLE: u8;
-}
-
-fn load_interrupt_table() {
-    call_without_endinit(|| unsafe {
-        let interrupt_table = &__INTERRUPT_TABLE as *const u8 as u32;
-        asm!("mtcr	$biv, {0}", in(reg32) interrupt_table);
-        asm!("isync");
-    });
-}
 
 mod runtime {
     use core::arch::global_asm;
