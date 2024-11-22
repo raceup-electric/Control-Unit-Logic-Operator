@@ -17,6 +17,8 @@ use drivers::can::pin_map::*;
 use drivers::can::config::NodeInterruptConfig;
 use drivers::cpu::Priority;
 use drivers::can::*;
+use drivers::pac;
+use drivers::gpio::*;
 
 type CanBase = Node<Can0Node, Can0, Node0, Configured>;
 
@@ -34,6 +36,9 @@ pub struct CanObj{
 impl CanObj{
     // init: Instantiate a new can node that is usable to send/recv Data Frame
     pub fn init() -> Option<Self>{
+        let gpio20 = pac::P20.split();
+        let mut stb = gpio20.p20_6.into_push_pull_output();
+        stb.set_low();
         let can_module = Module::new(Module0);
         let mut can_module = can_module.enable();
 

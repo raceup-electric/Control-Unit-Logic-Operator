@@ -15,6 +15,7 @@ integrity_check_system = { git = "https://github.com/mrmonopoly-cyber/integrity_
 [dependencies.tc375-pac]
 registry = "bluewind"
 version = "0.0.1"
+features = [ "all" ]
 
 [dependencies.bw-r-drivers-tc37x]
 registry = "bluewind"
