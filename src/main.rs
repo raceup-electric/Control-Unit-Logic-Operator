@@ -28,6 +28,7 @@ use drivers::{ssw,pac};
 
 #[export_name = "main"]
 fn main() -> ! {
+    interrupt::enable();
     let can = comunication::can::can_obj::CanObj::init().unwrap();
     let _ics = ics::IcsCan::new(0x600_u16,&can);
 

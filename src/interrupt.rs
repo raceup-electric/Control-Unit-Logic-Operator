@@ -14,3 +14,9 @@ pub fn load_interrupt_table() {
         asm!("isync");
     });
 }
+
+pub fn enable(){
+    unsafe {
+        asm!("enable");
+    }
+}
