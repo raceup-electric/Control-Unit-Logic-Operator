@@ -8,3 +8,6 @@ target="tc162-htc-none"
 [target.tc162-htc-none]
 runner="tricore-probe -l trace"
 rustflags = ["-Z", "dwarf-version=4"]
+
+[env]
+DEFMT_LOG="trace"
